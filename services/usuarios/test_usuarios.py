@@ -1,4 +1,4 @@
-from services.conexion import *
+from conexion import *
 import pytest
 
 class Test_usuarios:

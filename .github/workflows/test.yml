@@ -26,7 +26,7 @@ jobs:
       # Se descarga el repositorio a la máquina virtual
       - name: Checkout del código
         uses: actions/checkout@v3
-      # Se instala python 
+      # Se instala python
       - name: Instalación Python
         uses: actions/setup-python@v4
         with:
@@ -42,18 +42,25 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest requests
-      # Se levanta el microservicio en segundo plano
-      - name: Ejecución del microservicio
+      # Se levantan los 4 microservicios en segundo plano
+      - name: Ejecución de los microservicios
         run: |
-          python services/usuarios/app.py &
-      # Se ejecutan las pruebas
+          cd services/usuarios && python app.py &
+          cd services/paises && python app.py &
+          cd services/autores && python app.py &
+          cd services/editoriales && python app.py &
+          sleep 3
+      # Se ejecutan las pruebas de los 4 microservicios
       - name: Ejecución pruebas con Pytest
         env:
-          # Se indicas al código que la DB está en localhost para el entorno de GitHub
+          # Se indica al código que la DB está en localhost para el entorno de GitHub
           DB_HOST: 127.0.0.1
           DB_USER: root
           DB_PASSWORD: root
           DB_NAME: biblioteca
         # Se especifica carpeta para los tests
         run: |
-          pytest services/paises/test_paises.py
+          pytest services/usuarios/test_usuarios.py -v
+          pytest services/paises/test_paises.py -v
+          pytest services/autores/test_autores.py -v
+          pytest services/editoriales/test_editoriales.py -v

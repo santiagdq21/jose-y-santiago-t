@@ -71,7 +71,7 @@ class Test_autores:
         mi_cursor.execute(sql)
         datos = mi_cursor.fetchall()[0]
         #funcione pues omeeee
-        assert datos[3] == "Gabriel G. Márquez" and datos[2] == "gabriel@mail.com"
+        assert datos[1] == "Gabriel G. Márquez" and datos[2] == "gabriel@mail.com"
 
     def test_modifica2(self):
         # Autor no existe

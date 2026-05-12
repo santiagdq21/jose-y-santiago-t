@@ -70,7 +70,7 @@ class Test_autores:
         sql = f"SELECT * FROM autores WHERE idAutor='{id}'"
         mi_cursor.execute(sql)
         datos = mi_cursor.fetchall()[0]
-        assert datos[2] == "Gabriel G. Márquez" and datos[3] == "gabriel@mail.com"
+        assert datos[3] == "Gabriel G. Márquez" and datos[2] == "gabriel@mail.com"
 
     def test_modifica2(self):
         # Autor no existe

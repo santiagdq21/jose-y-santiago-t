@@ -4,22 +4,23 @@ import pytest
 class Test_autores:
 
     def setup_class(self):
-        # Preparación del entorno de las pruebas
         self.url = "http://localhost:5081/autores"
+        # Limpiar por si quedaron datos de corridas anteriores
+        mi_cursor.execute("DELETE FROM autores WHERE idAutor IN ('aut001','aut002')")
+        mi_cursor.execute("DELETE FROM paises WHERE idPais='CO'")
+        mi_db.commit()
         # Insertar país de apoyo (FK requerida)
-        sql_pais = "INSERT INTO paises (idPais,continente,nombre) VALUES ('COL','América','Colombia')"
+        sql_pais = "INSERT INTO paises (idPais,continente,nombre) VALUES ('CO','América','Colombia')"
         mi_cursor.execute(sql_pais)
         # Insertar autor de prueba directamente en BD
-        sql = "INSERT INTO autores (idAutor,idPais,nombre,email) VALUES ('aut001','COL','Gabriel García','garcia@mail.com')"
+        sql = "INSERT INTO autores (idAutor,idPais,nombre,email) VALUES ('aut001','CO','Gabriel García','garcia@mail.com')"
         mi_cursor.execute(sql)
         mi_db.commit()
 
     def teardown_class(self):
         # Limpia la base de datos (primero autores por FK, luego pais)
-        sql = "DELETE FROM autores WHERE idAutor='aut001'"
-        mi_cursor.execute(sql)
-        sql_pais = "DELETE FROM paises WHERE idPais='COL'"
-        mi_cursor.execute(sql_pais)
+        mi_cursor.execute("DELETE FROM autores WHERE idAutor IN ('aut001','aut002')")
+        mi_cursor.execute("DELETE FROM paises WHERE idPais='CO'")
         mi_db.commit()
 
     def test_lista_autores(self):
@@ -32,11 +33,11 @@ class Test_autores:
         ["nuevo_entrada", "esperado_entrada"],
         [
             (
-                {"id": "aut002", "idPais": "COL", "nombre": "Tomás González", "email": "tomas@mail.com"},
+                {"id": "aut002", "idPais": "CO", "nombre": "Tomás González", "email": "tomas@mail.com"},
                 "Autor agregado con éxito"
             ),
             (
-                {"id": "aut001", "idPais": "COL", "nombre": "Gabriel García", "email": "garcia@mail.com"},
+                {"id": "aut001", "idPais": "CO", "nombre": "Gabriel García", "email": "garcia@mail.com"},
                 "Id de autor ya existe"
             ),
         ]
@@ -61,7 +62,7 @@ class Test_autores:
     def test_modifica1(self):
         # Autor existe y se modifica con éxito
         id = "aut001"
-        nuevo = {"id": id, "idPais": "COL", "nombre": "Gabriel G. Márquez", "email": "gabriel@mail.com"}
+        nuevo = {"id": id, "idPais": "CO", "nombre": "Gabriel G. Márquez", "email": "gabriel@mail.com"}
         esperado = "Autor modificado con éxito"
         calculado = requests.put(f"{self.url}/{id}", json=nuevo)
         assert calculado.status_code == 200
@@ -74,7 +75,7 @@ class Test_autores:
     def test_modifica2(self):
         # Autor no existe
         id = "aut999"
-        nuevo = {"id": id, "idPais": "COL", "nombre": "Nadie", "email": "nadie@mail.com"}
+        nuevo = {"id": id, "idPais": "CO", "nombre": "Nadie", "email": "nadie@mail.com"}
         esperado = "Autor no existe"
         calculado = requests.put(f"{self.url}/{id}", json=nuevo)
         assert calculado.status_code == 200
